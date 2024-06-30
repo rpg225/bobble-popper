@@ -7,7 +7,7 @@ canvas.style.backgroundColor = 'black';
 document.body.prepend(canvas);
 
 const ctx = canvas.getContext('2d'); 
-const bubble = {bubbleCount:30, bubbles:[]};
+const bubble = {bubbleCount:30, speed:5,bubbles:[]};
 const game = {req:''};
 
 function draw() {
@@ -16,9 +16,14 @@ if(bubble.bubbles.length < bubble.bubbleCount){
         // create new bubbles
         bubbleMaker();
     }
-    bubble.bubbles.forEach((bubble, index) => {
-        bubble.y--;
-        drawBubble(bubble.x,bubble.y,bubble.size);
+    bubble.bubbles.forEach((bub, index) => {
+        bub.y-=bubble.speed;
+        bub.x-= Math.random()*5 -3;
+        if(bub.y < 0){
+          let temp = bubble.bubbles.splice(index, 1);
+          console.log(temp);
+        }
+        drawBubble(bub.x,bub.y,bub.size,bub.color);
     })
     game.req = requestAnimationFrame(draw);
 }
@@ -26,21 +31,22 @@ if(bubble.bubbles.length < bubble.bubbleCount){
 function bubbleMaker(){
     let bubbleSize = Math.random() * 10 + 15;
     let xPos = Math.random() * (canvas.width - bubbleSize);
-    let yPos = Math.random() * (canvas.height - bubbleSize);
+    let yPos = Math.random() * (canvas.height - bubbleSize)+canvas.height;
 
     bubble.bubbles.push({
         x:xPos,
         y:yPos,
-        size:bubbleSize
+        size:bubbleSize,
+        color:[Math.random()*255,Math.random()*255,Math.random()*255] 
     });
 
 }
 
-function drawBubble(xPos,yPos,bubbleSize){
+function drawBubble(xPos,yPos,bubbleSize,cl){
     // gradient fill 
     const gradient = ctx.createRadialGradient( xPos, yPos-10, bubbleSize-15,
     xPos, yPos,bubbleSize+10);
-    gradient.addColorStop(0, 'rgba(0,0,255,0.9)');
+    gradient.addColorStop(0, 'rgba('+cl[0]+','+cl[1]+','+cl[2]+',0.9 )');
     gradient.addColorStop(1, 'rgba(255,255,255,0.1');
 
 
