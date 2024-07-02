@@ -8,7 +8,29 @@ document.body.prepend(canvas);
 
 const ctx = canvas.getContext('2d'); 
 const bubble = {bubbleCount:30, speed:5,bubbles:[]};
+
+const clicker = [];
+
 const game = {req:''};
+
+canvas.addEventListener('click',(e)=>{
+    
+    const rect = canvas.getBoundingClientRect();
+    const mouseClick = {
+        x:e.clientX-rect.left,
+        y:e.clientY-rect.top,
+        width:5,
+        height:5,
+        size:10
+
+    }
+    clicker.push(mouseClick);
+    console.log(mouseClick);
+    //console.log(rect.top);
+    //console.log(rect.left);
+    //console.log(e.clientX);
+   // console.log(e.clientY);
+})
 
 function draw() {
 ctx.clearRect(0,0, canvas.width, canvas.height);
@@ -16,12 +38,27 @@ if(bubble.bubbles.length < bubble.bubbleCount){
         // create new bubbles
         bubbleMaker();
     }
+
+    clicker.forEach((dot,index)=>{
+        // ctx.fillStyle = 'yellow';
+        ctx.strokeStyle = 'yellow';
+        ctx.beginPath();
+        // ctx.fillRect(dot.x-(dot.size/2), dot.y-(dot.size/2), dot.size,dot.size);
+        ctx.arc(dot.x, dot.y, dot.size,0, 2*Math.PI);
+        ctx.stroke();
+        dot.size--;
+        if(dot.size<1){
+            clicker.splice(index, 1);
+        }
+    })
+
+
     bubble.bubbles.forEach((bub, index) => {
         bub.y-=bubble.speed;
         bub.x-= Math.random()*5 -3;
         if(bub.y < 0){
           let temp = bubble.bubbles.splice(index, 1);
-          console.log(temp);
+          //console.log(temp);
         }
         drawBubble(bub.x,bub.y,bub.size,bub.color);
     })
