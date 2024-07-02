@@ -7,7 +7,11 @@ canvas.style.backgroundColor = 'black';
 document.body.prepend(canvas);
 
 const ctx = canvas.getContext('2d'); 
-const bubble = {bubbleCount:30, speed:5,bubbles:[]};
+const bubble = {
+    bubbleCount:30, 
+    speed:2,
+    bubbles:[]
+};
 
 const clicker = [];
 
@@ -26,11 +30,30 @@ canvas.addEventListener('click',(e)=>{
     }
     clicker.push(mouseClick);
     console.log(mouseClick);
+    bubble.bubbles.forEach((bub, index) => {
+        colCheck(bub,mouseClick);
+    })
+    // console.log(a,b)
     //console.log(rect.top);
     //console.log(rect.left);
     //console.log(e.clientX);
    // console.log(e.clientY);
 })
+
+// collision detection
+
+function colCheck(a,b){
+    
+    // let horz = a.x < b.x+b.size && a.x+a.size > b.x;
+    // let vert = a.y < b.y+b.size && a.y+a.size > b.y;
+    let hit = a.x < b.x+b.size && a.x+a.size > b.x && a.y < b.y+b.size && a.y+a.size > b.y
+
+    if(hit) {
+        console.log(a);
+        console.log(b);
+    }
+    return hit;
+}
 
 function draw() {
 ctx.clearRect(0,0, canvas.width, canvas.height);
