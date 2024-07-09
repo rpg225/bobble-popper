@@ -15,7 +15,9 @@ const bubble = {
 
 const clicker = [];
 
-const game = {req:''};
+const game = { score : 0 };
+
+const EPSILON = 0.0001; // for collision detection
 
 canvas.addEventListener('click',(e)=>{
     
@@ -23,21 +25,22 @@ canvas.addEventListener('click',(e)=>{
     const mouseClick = {
         x:e.clientX-rect.left,
         y:e.clientY-rect.top,
-        width:5,
-        height:5,
-        size:10
+        size:30
 
     }
     clicker.push(mouseClick);
-    console.log(mouseClick);
-    bubble.bubbles.forEach((bub, index) => {
-        colCheck(bub,mouseClick);
+    // console.log(mouseClick);
+    /*bubble.bubbles.forEach((bub, index) => {
+        if(colCheck(bub,mouseClick)){
+            bubble.bubbles.splice(index, 1);
+        }
+        
     })
     // console.log(a,b)
     //console.log(rect.top);
     //console.log(rect.left);
     //console.log(e.clientX);
-   // console.log(e.clientY);
+   // console.log(e.clientY); */
 })
 
 // collision detection
@@ -69,8 +72,8 @@ if(bubble.bubbles.length < bubble.bubbleCount){
         // ctx.fillRect(dot.x-(dot.size/2), dot.y-(dot.size/2), dot.size,dot.size);
         ctx.arc(dot.x, dot.y, dot.size,0, 2*Math.PI);
         ctx.stroke();
-        dot.size--;
-        if(dot.size<1){
+        dot.size -= 1;
+        if(dot.size < 1){
             clicker.splice(index, 1);
         }
     })
@@ -78,13 +81,31 @@ if(bubble.bubbles.length < bubble.bubbleCount){
 
     bubble.bubbles.forEach((bub, index) => {
         bub.y-=bubble.speed;
-        bub.x-= Math.random()*5 -3;
+        bub.x-= Math.random() * 5 -3;
         if(bub.y < 0){
           let temp = bubble.bubbles.splice(index, 1);
           //console.log(temp);
         }
-        drawBubble(bub.x,bub.y,bub.size,bub.color);
+        clicker.forEach((dot) => {
+            if(colCheck(bub, dot)){
+               let popped = bubble.bubbles.splice(index, 1);
+                let val = Math.ceil(popped[0].size);
+                game.score += val;
+
+            }
+        })
+        drawBubble(bub.x,bub.y,bub.size,bub.color);     
     })
+
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillRect(0,20,canvas.width,40);
+    ctx.beginPath();
+    ctx.fillStyle = 'white';
+    ctx.font = '36px serif';
+    ctx.textAlign = 'center';
+    let tempOutput = `SCORE : ${game.score}`;
+    ctx.fillText(tempOutput,canvas.width/2,60);
+
     game.req = requestAnimationFrame(draw);
 }
 
